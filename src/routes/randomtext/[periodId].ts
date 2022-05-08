@@ -1,4 +1,4 @@
-import { database } from '$lib/db/test_database';
+import { db } from '$lib/db';
 import { periods } from '$lib/info';
 import type { Text } from '$lib/types';
 import type { RequestHandler } from '@sveltejs/kit';
@@ -16,7 +16,7 @@ export const get: RequestHandler<Params, OutputType> = async({ params }) => {
   }
 
   const period = periods[params.periodId];
-  const text = await database.getRandomText(period);
+  const text = await db.getRandomText(period);
   return {
     body: {
       text,

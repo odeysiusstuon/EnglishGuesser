@@ -27,7 +27,7 @@ async function getRandomTextInPeriod(period: Period) {
 	return filteredTexts[Math.floor(Math.random() * filteredTexts.length)].text;
 }
 
-export const database: IDatabase = {
+export const test_database: IDatabase = {
 	getRandomText(period: Period) {
 		return new Promise(async (resolve, reject) => {
 			resolve(await getRandomTextInPeriod(period));

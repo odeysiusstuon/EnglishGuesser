@@ -1,4 +1,4 @@
-import { database } from '$lib/db/test_database';
+import { db } from '$lib/db';
 import type { Text } from '$lib/types';
 import type { RequestHandler } from '@sveltejs/kit';
 
@@ -23,7 +23,7 @@ export const get: RequestHandler<Params, OutputType> = async({ params, url }) =>
   }
 
   try {
-    const feedback = await database.getGuessFeedback(parseInt(params.textId), guess);
+    const feedback = await db.getGuessFeedback(parseInt(params.textId), guess);
     console.log(feedback);
     return {
       body: {
