@@ -15,9 +15,9 @@
 		"target": "es2020"
 	},
 	"include": [
-		"../src/**/*.js",
-		"../src/**/*.ts",
-		"../src/**/*.svelte",
-		"../src/decs.d.ts"
+		"./src/**/*.js",
+		"./src/**/*.ts",
+		"./src/**/*.svelte",
+		"./src/decs.d.ts"
 	],
 }

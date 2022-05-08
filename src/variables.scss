@@ -1,1 +1,24 @@
 /* Variables and mixins declared here will be available in all other SCSS files */
+$base-color: #ffe9c6;
+$primary-color: #b59157;
+
+$primary-button-color: #3e5877;
+$secondary-button-color: #397766;
+
+// $primary-button-color-hover: #86adda;
+// $secondary-button-color-hover: #b4cbc4;
+$primary-button-color-hover: #243345;
+$secondary-button-color-hover: #152b25;
+
+$primary-button-text-color: #fff;
+$secondary-button-text-color: #fff;
+
+$primary-button-text-color-hover: #fff;
+$secondary-button-text-color-hover: #fff;
+
+$text-color: #000000;
+$font-family: 'IM Fell English SC', serif;
+
+$number-input-background-color: rgba(255, 255, 255, 0.5);
+
+$header-size: 52px;

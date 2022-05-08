@@ -1,5 +1,4 @@
 /* Write your global styles here, in SCSS syntax. Variables and mixins from the src/variables.scss file are available here without importing */
-// Your entrypoint for including sass files from Carbon
 $css--font-face: true;
 $css--helpers: true;
 $css--body: true;
@@ -8,9 +7,13 @@ $css--reset: true;
 $css--default-type: true;
 $css--plex: true;
 
+@import 'tooltip.scss';
+
 html, body {
     height: 100%;
     margin: 0;
-    font-family: 'IM Fell English SC', serif;
+    font-family: $font-family;
     overflow: hidden;
+    background-color: $base-color;
+    color: $text-color;
 }

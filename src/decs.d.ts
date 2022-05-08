@@ -1,1 +1,1 @@
-declare module "svelte-range-slider-pips";
+declare module "svelte-range-slider-pips/src";
