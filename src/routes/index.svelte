@@ -1,9 +1,11 @@
 <script lang="ts" context="module">
     import type { LoadInput } from '@sveltejs/kit';
 
+    const initialPeriod = 'eme';
+
     /** @type {import('./index').Load} */
     export async function load({ fetch }: LoadInput) {
-        const url = `/randomtext/oe.json`;
+        const url = `/randomtext/${initialPeriod}.json`;
         const response = await fetch(url);
         const text = (await response.json()).text as Text;
         
@@ -34,6 +36,8 @@
     let points: number = 0;
     let values: number[] = [2022];
     let guess: number;
+    let currentPeriod: string = 'eme';
+    let guessed: boolean = false;
 
     $: guess = values[0];
 
@@ -50,22 +54,28 @@
     }
 
     async function onSubmitGuess() {
-        const response = await fetch(`/feedback/${text.id}.json?guess=${guess}`);
-        if (response.ok) {
-            const responseJson = await response.json();
-            guessFeedback = responseJson.feedback as GuessFeedback;
-            showFeedbackModal();
+        if (!guessed) {
+            const response = await fetch(`/feedback/${text.id}.json?guess=${guess}`);
+            if (response.ok) {
+                guessed = true;
+                const responseJson = await response.json();
+                guessFeedback = responseJson.feedback as GuessFeedback;
+                showFeedbackModal();
+            }
         }
     }
 
     async function onSkip() {
-        const url = `/randomtext/oe.json`;
+        const url = `/randomtext/${currentPeriod}.json`;
         const response = await fetch(url);
         text = (await response.json()).text as Text;
         values[0] = maxYear;
+        guessed = false;
     }
 
     $: points += (guessFeedback?.points || 0);
+
+    $: console.log(guessed);
 </script>
 
 <Modal show={$feedbackModal}>
@@ -78,13 +88,13 @@
         </div>
         
         <div class="text-area">
+            <div class="points-area">Your Total Points: {points}</div>
             <Modal
                 styleWindow={{ 'background-color': '#ffe9c6' }}
             >
                 <HelpContent />
             </Modal>
-            <QuoteContent>{text.id}: {text.content}</QuoteContent>
-            <div class="points-area">Your Total Points: {points}</div>
+            <QuoteContent maxWidth="80%">{text.content}</QuoteContent>
         </div>
     
         <div class="guess-input-area"> 
@@ -94,17 +104,17 @@
                 <div class="period-label" id="eme-period-label">Early Modern English</div>
                 <div class="period-label" id="ce-period-label">Contemporary English</div>
                 <div id="slider">
-                    <SliderInput bind:values />
+                    <SliderInput disabled={guessed} bind:values />
                 </div>
             </div>
             <div class="button-container" id="guess-button-container">
-                <button class="button" id="guess-button" on:click={onSubmitGuess}>Guess</button>
+                <button class="button" id="guess-button" disabled={guessed} on:click={onSubmitGuess}>Guess</button>
             </div>
             <div id="number-input">
-                <NumberInput bind:values input={values[0]} />
+                <NumberInput disabled={guessed} bind:values input={values[0]} />
             </div>
             <div class="button-container" id="skip-button-container">
-                <button class="button" id="skip-button" on:click={onSkip}>Skip</button>
+                <button class="button" id={guessed ? "next-button" : "skip-button"} on:click={onSkip}>{guessed ? 'Next' : 'Skip'}</button>
             </div>
         </div>
     </div>
@@ -118,7 +128,8 @@
     .container {
         height: 100%;
         display: grid;
-        grid-template-rows: 20% 30% 50%;
+        grid-template-rows: 30% 20% 30%;
+        row-gap: 0px;
         justify-items: center;
         align-items: center;
     }
@@ -126,26 +137,6 @@
     h1 {
         font-size: $header-size;
     }
-
-    // .divider:before {
-    //     display: block;
-    //     content: "";
-    //     height: 30px;
-    //     margin-top: -31px;
-    //     border-style: solid;
-    //     border-color: $text-color;
-    //     border-width: 0 0 1px 0;
-    //     border-radius: 10px;
-    // }
-
-    // .divider {
-    //     overflow: visible;
-    //     height: 30px;
-    //     border-style: solid;
-    //     border-color: $text-color;
-    //     border-width: 1px 0 0 0;
-    //     border-radius: 10px;
-    // }
 
     .divider {
         border: none;
@@ -165,17 +156,14 @@
         text-align: center;
     }
 
-    /* .container:hover {
-        height: 30%;
-    } */
-
     .header-area {
         text-align: center;
     }
 
     .text-area {
         display: grid;
-        grid-template-rows: 1fr 1fr 1fr;
+        grid-template-rows: 20% 10% 70%;
+        row-gap: 10px;
         justify-items: center;
         align-items: center;
     }
@@ -183,24 +171,27 @@
     .guess-input-area {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        grid-template-rows: 1fr 30%;
+        grid-template-rows: repeat(2, 1fr);
         height: 50%;
         width: 90%;
+        row-gap: 60%;
         text-align: center;
     }
 
     #slider-area {
         display: grid;
+        margin: -2em;
         grid-template-columns: var(--periods-template-columns);
-        grid-template-rows: 10px 50px;
+        grid-template-rows: 40%;
         grid-area: 1 / 1 / 2 / 8;
     }
 
     #slider {
-        grid-area: 1 / 1 / 2 / calc(var(--num-periods) + 1);
+        grid-area: 2 / 1 / 3 / calc(var(--num-periods) + 1);
     }
 
     .period-label {
+        grid-row-start: 1;
         text-align: center;
         font-size: 20px;
     }
@@ -222,11 +213,12 @@
 
     .button-container {
         text-align: center;
+        margin: auto;
+        width: fit-content;
+        height: fit-content;
     }
 
     .button {
-        display: flex;
-        align-items: center;
         padding: 0.35em 1.2em;
         border: 0.1em solid rgba(255,255,255,0);
         margin: 0 0.3em 0.3em 0;
@@ -234,8 +226,11 @@
         box-sizing: border-box;
         text-decoration: none;
         font-family: $font-family;
+        text-align: center;
         transition: all 0.3s;
         font-size: 24px;
+        width: 100%;
+        height: 100%;
     }
 
     .button:hover {
@@ -257,8 +252,25 @@
         color: $secondary-button-text-color;
     }
 
+    #next-button {
+        background-color: $primary-button-color;
+        color: $primary-button-text-color;
+    }
+
     #skip-button:hover {
         color: $secondary-button-text-color-hover;
         background-color: $secondary-button-color-hover;
+    }
+
+    #next-button:hover {
+        background-color: $primary-button-color-hover;
+        color: $primary-button-text-color-hover;
+    }
+
+    button:disabled,
+    button[disabled]{
+        border: 1px solid #999999;
+        background-color: #cccccc;
+        color: #666666;
     }
 </style>

@@ -5,6 +5,7 @@
 
 	export let values: number[];
 	export let input: number = values[0];
+	export let disabled: boolean = false;
     let previousInput: number = input;
 
 	function onChange(e: Event) {
@@ -38,7 +39,7 @@
 	}
 </script>
 
-<input on:change={onChange} use:validator={input} bind:value={input} />
+<input on:change={onChange} use:validator={input} {disabled} bind:value={input} />
 
 <style lang="scss">
     input {

@@ -18,6 +18,7 @@
     {/if}.
 </p>
 <p>You have been awarded <strong>{feedback.points}</strong> point{feedback.points === 1 ? '' : 's'}!</p>
+<p>Click the next button to get then next text.</p>
 
 <style lang="scss">
     p {
