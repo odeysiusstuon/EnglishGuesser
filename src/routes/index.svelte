@@ -47,12 +47,15 @@
                 <SliderInput bind:values />
             </div>
         </div>
-        <div class="spacing"></div>
-        <button class="button" id="guess-button">Guess</button>
+        <div class="button-container" id="guess-button-container">
+            <button class="button" id="guess-button">Guess</button>
+        </div>
         <div id="number-input">
             <NumberInput bind:values input={values[0]} />
         </div>
-        <button class="button" id="skip-button">Skip</button>
+        <div class="button-container" id="skip-button-container">
+            <button class="button" id="skip-button">Skip</button>
+        </div>
     </div>
 </div>
 
@@ -129,9 +132,10 @@
     .guess-input-area {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        grid-template-rows: repeat(3, 1fr);
+        grid-template-rows: 1fr 30%;
         height: 50%;
         width: 90%;
+        text-align: center;
     }
 
     #slider-area {
@@ -142,36 +146,36 @@
     }
 
     #slider {
-        grid-area: 2 / 1 / 3 / calc(var(--num-periods) + 1);
+        grid-area: 1 / 1 / 2 / calc(var(--num-periods) + 1);
     }
 
     .period-label {
         text-align: center;
+        font-size: 20px;
     }
 
-    .spacing {
-        grid-area: 2 / 1 / 3 / 8;
-
-    }
-
-    #guess-button {
-        grid-area: 3 / 2 / 4 / 3;
-        font-size: 24px;
+    #guess-button-container {
+        grid-area: 2 / 2 / 3 / 3;
     }
 
     #number-input {
-        grid-area: 3 / 4 / 4 / 5;
+        grid-area: 2 / 4 / 3 / 5;
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
-    #skip-button {
-        grid-area: 3 / 6 / 4 / 7;
-        font-size: 24px;
+    #skip-button-container {
+        grid-area: 2 / 6 / 3 / 7;
+    }
+
+    .button-container {
+        text-align: center;
     }
 
     .button {
+        display: flex;
+        align-items: center;
         padding: 0.35em 1.2em;
         border: 0.1em solid rgba(255,255,255,0);
         margin: 0 0.3em 0.3em 0;
@@ -179,8 +183,8 @@
         box-sizing: border-box;
         text-decoration: none;
         font-family: $font-family;
-        text-align: center;
         transition: all 0.3s;
+        font-size: 24px;
     }
 
     .button:hover {

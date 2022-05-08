@@ -1,3 +1,5 @@
+import type { Period } from "./info";
+
 export type YearRange = {
     'start': number;
     'end': number;
@@ -16,6 +18,6 @@ export type GuessFeedback = {
 };
 
 export interface IDatabase {
-    getRandomText: (period: string) => Promise<Text>;
-    getGuessFeedback: (text: Text, guess: number) => Promise<[Text]>;
+    getRandomText: (period: Period) => Promise<Text>;
+    getGuessFeedback: (text: Text, guess: number) => Promise<GuessFeedback>;
 }

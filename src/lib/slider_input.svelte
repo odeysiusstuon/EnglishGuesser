@@ -6,11 +6,6 @@
     let currentYear = values[0];
 
     let sliderColorsStyle: string;
-
-    let currentSliderColor: string;
-    $: {
-        
-    }
     
     $: {
         const styleArray: string[] = [];
@@ -26,40 +21,41 @@
 
     let positions: string = "";
     $: {
-        let positionsStyles = "";
+        const selectors: string[] = [];
         acceptable.forEach((e) => {
-            positionsStyles += `#slider .pip:nth-child(${e+1}) { display: block; }`;
+            const selector = `.pip:nth-child(${e + 1 - periods['oe'].years.start})`;
+            selectors.push(selector);
         });
-        positions = `<${''}style>:root { ${positionsStyles} }</${''}style>`;
+        positions = `<${''}style>\n${selectors.join(', ')} { display: block; }</${''}style>`;
+        console.log(positions);
     }
 
-    // https://github.com/simeydotme/svelte-range-slider-pips/issues/45
-    // https://svelte.dev/repl/d777b85ba4c9493a8169676adbab1fa6?version=3.44.1
-    function reAlign(e: any) {
-        const v = e.detail.value;
-        if ( !acceptable.includes(v) ) {
-            let closest = acceptable.reduce((prev, curr) => Math.abs(curr - v) < Math.abs(prev - v) ? curr : prev);
-            // https://stackoverflow.com/a/35000557/1121532
-            values[0] = closest;
-        }
-    }
+    // // https://github.com/simeydotme/svelte-range-slider-pips/issues/45
+    // // https://svelte.dev/repl/d777b85ba4c9493a8169676adbab1fa6?version=3.44.1
+    // function reAlign(e: any) {
+    //     const v = e.detail.value;
+    //     if ( !acceptable.includes(v) ) {
+    //         let closest = acceptable.reduce((prev, curr) => Math.abs(curr - v) < Math.abs(prev - v) ? curr : prev);
+    //         // https://stackoverflow.com/a/35000557/1121532
+    //         values[0] = closest;
+    //     }
+    // }
 </script>
 
 <div style="container">
     <div class="slider-container" style="--slider-background-color: {sliderColorsStyle}">
-        <div class="slider">
-            <RangeSlider
-                id=slider
-                min={minYear}
-                max={maxYear}
-                all="label"
-                float
-                pips
-                pipstep={100}
-                bind:values
-            />
-            {@html positions}
-        </div>
+        <RangeSlider
+            id="slider"
+            min={minYear}
+            max={maxYear}
+            float
+            pips
+            step={1}
+            pipstep={1}
+            all="label"
+            bind:values
+        />
+        {@html positions}
     </div>
 </div>
 
@@ -78,6 +74,36 @@
         --range-slider: rgba(0, 0, 0, 0);
         align-items: center;
         justify-items: center;
+    }
+
+    :global(.rangeSlider) {
+        --range-inactive:  var(--handle-focus);
+        --range:           var(--handle-focus);
+        --float-inactive:  var(--handle-focus);
+        --float:           var(--handle-focus);
+    }
+
+    :global(.rangeSlider .rangeFloat) {
+        opacity: 1;
+        background-color: $primary-button-color;
+    }
+
+    :global(.rangeSlider.focus .rangeFloat) {
+        opacity: 1;
+    }
+
+
+    :global(.rangeHandle) {
+        width: 100px;
+        height: 13px;
+        top: 50px;
+        .rangeNub {
+            border-radius: 100px;
+        }
+    }
+
+    :global(.rangeHandle) {
+        color: red;
     }
 
     // .rangeSlider {
