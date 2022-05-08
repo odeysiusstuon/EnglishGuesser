@@ -7,6 +7,7 @@
     import QuoteContent from '$lib/quote_content.svelte';
     import HelpContent from '$lib/help/help_content.svelte';
 
+    let points: number = 0;
     let values: number[] = [2022];
 
     let periodLabelsTemplateColumns: string = '';
@@ -35,6 +36,7 @@
             <HelpContent />
         </Modal>
         <QuoteContent>Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam nisi unde iste eos dolore accusamus sed facere consequatur atque inventore labore maxime eligendi cum nobis assumenda, voluptates rerum adipisci commodi?</QuoteContent>
+        <div class="points-area">Your Total Points: {points}</div>
     </div>
 
     <div class="guess-input-area"> 
@@ -124,7 +126,7 @@
 
     .text-area {
         display: grid;
-        grid-template-rows: 1fr 1fr;
+        grid-template-rows: 1fr 1fr 1fr;
         justify-items: center;
         align-items: center;
     }
