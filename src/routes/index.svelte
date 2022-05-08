@@ -2,20 +2,52 @@
     import Slider from '$lib/slider.svelte';
 </script>
 
-<div style="grid grid-cols-6 gap-4" id="main">
-    <div class="col-start-2 col-span-4">
-        <h1 class="text-3xl font-bold underline">
-            History of English Guesser
+<div class="container">
+    <div class="header-area">
+        <h1>
+            Test
         </h1>
     </div>
     
-    <div class="col-span-1">
+    <div class="text-area">
+        testetse
+    </div>
+
+    <div class="guess-input">
         <Slider />
     </div>
 </div>
 
+<div class="hidden">
+    Test
+</div>
+
 <style>
-    #main {
+    .container {
         height: 100%;
+        display: grid;
+        grid-template-rows: 1fr 1fr 2fr;
+        gap: 20px;
+        grid-template-columns: 1fr;
+        justify-items: center;
+        align-items: center;
+    }
+
+    .hidden {
+        margin-top: 10em;
+        width: 100%;
+        align-items: center;
+        justify-items: center;
+        text-align: center;
+    }
+
+    /* .container:hover {
+        height: 30%;
+    } */
+
+    .guess-input {
+        height: 10%;
+        width: 90%;
+        grid-row: 2fr;
     }
 </style>
