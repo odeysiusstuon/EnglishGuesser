@@ -1,14 +1,45 @@
-<script lang="ts">
-    import Modal from 'svelte-simple-modal';
+<script lang="ts" context="module">
+    import type { LoadInput } from '@sveltejs/kit';
 
+    /** @type {import('./index').Load} */
+    export async function load({ fetch }: LoadInput) {
+        const url = `/randomtext/oe`;
+        const response = await fetch(url);
+        const text = (await response.json()).text as Text;
+        
+        return {
+            status: response.status,
+            props: {
+                text,
+            },
+        };
+    }
+</script>
+
+<script lang="ts">
+    import Modal, { bind } from 'svelte-simple-modal';
+
+    import type { GuessFeedback, Text } from '$lib/types';
     import { getPeriodPercentage, numPeriods, periods } from '$lib/info';
     import SliderInput from '$lib/slider_input.svelte';
     import NumberInput from '$lib/number_input.svelte';
     import QuoteContent from '$lib/quote_content.svelte';
     import HelpContent from '$lib/help/help_content.svelte';
 
+    import { writable } from 'svelte/store';
+    import FeedbackPopup from '$lib/feedback/feedback_popup.svelte';
+    const feedbackModal = writable(null);
+    const showFeedbackModal = () => feedbackModal.set(bind(FeedbackPopup, { feedback: guessFeedback }));
+
     let points: number = 0;
     let values: number[] = [2022];
+    let guess: number;
+
+    $: guess = values[0];
+
+    let guessFeedback: GuessFeedback;
+    
+    export let text: Text;
 
     let periodLabelsTemplateColumns: string = '';
     const percentages = [];
@@ -17,49 +48,68 @@
         percentages.push(`${Math.round(percentage * 100)}%`);
         periodLabelsTemplateColumns = percentages.join(' ');
     }
+
+    async function onSubmitGuess() {
+        const response = await fetch(`/feedback/${text.id}.json?guess=${guess}`);
+        if (response.ok) {
+            const responseJson = await response.json();
+            guessFeedback = responseJson.feedback as GuessFeedback;
+            showFeedbackModal();
+        }
+    }
+
+    function onSkip() {
+        console.log('skip');
+    }
+
+    $: points += (guessFeedback?.points || 0);
     
     $: console.log(values);
+
+    $: console.log(guessFeedback);
 </script>
 
-<div class="container">
-    <div class="header-area">
-        <h1>
-            History of English Guessing Game
-        </h1>
-        <hr class="divider"/>
-    </div>
+<Modal show={$feedbackModal}>
+    <div class="container">
+        <div class="header-area">
+            <h1>
+                History of English Guessing Game
+            </h1>
+            <hr class="divider"/>
+        </div>
+        
+        <div class="text-area">
+            <Modal
+                styleWindow={{ 'background-color': '#ffe9c6' }}
+            >
+                <HelpContent />
+            </Modal>
+            <QuoteContent>{text.id}: {text.content}</QuoteContent>
+            <div class="points-area">Your Total Points: {points}</div>
+        </div>
     
-    <div class="text-area">
-        <Modal
-            styleWindow={{ 'background-color': '#ffe9c6' }}
-        >
-            <HelpContent />
-        </Modal>
-        <QuoteContent>Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam nisi unde iste eos dolore accusamus sed facere consequatur atque inventore labore maxime eligendi cum nobis assumenda, voluptates rerum adipisci commodi?</QuoteContent>
-        <div class="points-area">Your Total Points: {points}</div>
-    </div>
-
-    <div class="guess-input-area"> 
-        <div id="slider-area" style={`--periods-template-columns: ${periodLabelsTemplateColumns}; --num-periods: ${numPeriods}`}>
-            <div class="period-label" id="oe-period-label">Old English</div>
-            <div class="period-label" id="me-period-label">Middle English</div>
-            <div class="period-label" id="eme-period-label">Early Modern English</div>
-            <div class="period-label" id="ce-period-label">Contemporary English</div>
-            <div id="slider">
-                <SliderInput bind:values />
+        <div class="guess-input-area"> 
+            <div id="slider-area" style={`--periods-template-columns: ${periodLabelsTemplateColumns}; --num-periods: ${numPeriods}`}>
+                <div class="period-label" id="oe-period-label">Old English</div>
+                <div class="period-label" id="me-period-label">Middle English</div>
+                <div class="period-label" id="eme-period-label">Early Modern English</div>
+                <div class="period-label" id="ce-period-label">Contemporary English</div>
+                <div id="slider">
+                    <SliderInput bind:values />
+                </div>
+            </div>
+            <div class="button-container" id="guess-button-container">
+                <button class="button" id="guess-button" on:click={onSubmitGuess}>Guess</button>
+            </div>
+            <div id="number-input">
+                <NumberInput bind:values input={values[0]} />
+            </div>
+            <div class="button-container" id="skip-button-container">
+                <button class="button" id="skip-button" on:click={onSkip}>Skip</button>
             </div>
         </div>
-        <div class="button-container" id="guess-button-container">
-            <button class="button" id="guess-button">Guess</button>
-        </div>
-        <div id="number-input">
-            <NumberInput bind:values input={values[0]} />
-        </div>
-        <div class="button-container" id="skip-button-container">
-            <button class="button" id="skip-button">Skip</button>
-        </div>
     </div>
-</div>
+</Modal>
 
 <div class="hidden">
     Test

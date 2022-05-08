@@ -27,7 +27,6 @@
             selectors.push(selector);
         });
         positions = `<${''}style>\n${selectors.join(', ')} { display: block; }</${''}style>`;
-        console.log(positions);
     }
 
     // // https://github.com/simeydotme/svelte-range-slider-pips/issues/45

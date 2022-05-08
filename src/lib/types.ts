@@ -15,9 +15,11 @@ export type GuessFeedback = {
     guess: number;
     answer: YearRange;
     points: number;
+    distance: number;
 };
 
 export interface IDatabase {
     getRandomText: (period: Period) => Promise<Text>;
-    getGuessFeedback: (text: Text, guess: number) => Promise<GuessFeedback>;
+    getGuessFeedback: (textId: number, guess: number) => Promise<GuessFeedback>;
+    getText: (textId: number) => Promise<Text>;
 }

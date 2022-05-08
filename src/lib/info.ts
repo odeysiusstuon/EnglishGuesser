@@ -62,3 +62,6 @@ export const periods: {[key: string]: Period} = {
 export const minYear = periods.oe.years.start;
 export const maxYear = periods.ce.years.end;
 export const numPeriods = Object.keys(periods).length;
+
+export const graceFactor = 20;
+export const maxPoints = 100;
