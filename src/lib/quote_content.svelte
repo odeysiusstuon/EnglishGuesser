@@ -2,7 +2,7 @@
     export let borderRadius: string = '10px';
     export let borderWidth: string = '5px';
     export let padding: string = '30px';
-    export let maxWidth: string = '50%';
+    export let maxWidth: string = '100%';
 </script>
 
 <div class="text" style="--max-width: {maxWidth}; --padding: {padding}; --border-radius: {borderRadius}; --border-width: {borderWidth};">

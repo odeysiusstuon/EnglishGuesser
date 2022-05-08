@@ -3,7 +3,7 @@
 
     /** @type {import('./index').Load} */
     export async function load({ fetch }: LoadInput) {
-        const url = `/randomtext/oe`;
+        const url = `/randomtext/oe.json`;
         const response = await fetch(url);
         const text = (await response.json()).text as Text;
         
@@ -20,7 +20,7 @@
     import Modal, { bind } from 'svelte-simple-modal';
 
     import type { GuessFeedback, Text } from '$lib/types';
-    import { getPeriodPercentage, numPeriods, periods } from '$lib/info';
+    import { getPeriodPercentage, maxYear, numPeriods, periods } from '$lib/info';
     import SliderInput from '$lib/slider_input.svelte';
     import NumberInput from '$lib/number_input.svelte';
     import QuoteContent from '$lib/quote_content.svelte';
@@ -58,15 +58,14 @@
         }
     }
 
-    function onSkip() {
-        console.log('skip');
+    async function onSkip() {
+        const url = `/randomtext/oe.json`;
+        const response = await fetch(url);
+        text = (await response.json()).text as Text;
+        values[0] = maxYear;
     }
 
     $: points += (guessFeedback?.points || 0);
-    
-    $: console.log(values);
-
-    $: console.log(guessFeedback);
 </script>
 
 <Modal show={$feedbackModal}>

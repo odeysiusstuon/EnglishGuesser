@@ -10,5 +10,5 @@ if (!uri) {
   throw new Error('Could not find URI');
 }
 
-export const db: IDatabase = test_database;
-// export const db: IDatabase = new MongoDB(new MongoClient(uri).connect());
+// export const db: IDatabase = test_database;
+export const db: IDatabase = new MongoDB(new MongoClient(uri).connect());

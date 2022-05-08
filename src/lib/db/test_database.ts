@@ -10,7 +10,7 @@ type DatabaseText = {
 const texts: DatabaseText[] = [
 	{
 		text: {
-			id: 0,
+			id: '0',
 			content: 'hello'
 		},
 		years: {
@@ -34,7 +34,7 @@ export const test_database: IDatabase = {
 		});
 	},
 
-	getGuessFeedback: function (textId: number, guess: number) {
+	getGuessFeedback: function (textId: string, guess: number) {
 		return new Promise((resolve, reject) => {
 			if (!(textId in texts)) {
 				reject(`Could not find text: ${textId}`);
@@ -57,7 +57,7 @@ export const test_database: IDatabase = {
 		});
 	},
 
-	getText: function (textId: number) {
+	getText: function (textId: string) {
 		return new Promise((resolve, reject) => {
 			const foundDatabaseText = texts.find((t) => t.text.id === textId);
 			if (foundDatabaseText) {
