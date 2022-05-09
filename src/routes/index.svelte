@@ -30,7 +30,6 @@
 
     import { writable } from 'svelte/store';
     import FeedbackPopup from '$lib/feedback/feedback_popup.svelte';
-import { test_database } from '$lib/db/test_database';
     const feedbackModal = writable(null);
     const showFeedbackModal = () => feedbackModal.set(bind(FeedbackPopup, { feedback: guessFeedback }));
 
@@ -51,16 +50,13 @@ import { test_database } from '$lib/db/test_database';
         const words = textContent.split(' ');
         const numWords = words.length;
         if (numWords > maxWords) {
-            console.log(text.content);
             textContent = getRandomSubstring(words, numWords);
-            console.log('trimmed');
         }
     }
 
     function getRandomSubstring(words: string[], numWords: number) {
         const start = Math.floor((Math.random() * (numWords - maxWords)));
         const end = start + maxWords;
-        console.log(start, end);
         return `...${words.slice(start, end + 1).join(' ')}...`;
     }
 
@@ -93,8 +89,6 @@ import { test_database } from '$lib/db/test_database';
     }
 
     $: points += (guessFeedback?.points || 0);
-
-    $: console.log(guessed);
 </script>
 
 <Modal show={$feedbackModal}>
