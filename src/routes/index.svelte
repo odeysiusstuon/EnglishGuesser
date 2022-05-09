@@ -160,6 +160,10 @@
                 {/if}
             </div>
         </div>
+        
+        <div class="footer-area">
+            <footer>Created by <a href="https://www.linkedin.com/in/odeysiusstuon/">Odeysiuss Tuon</a>. Powered by <a href="https://kit.svelte.dev/">SvelteKit</a>.</footer>
+        </div>
     </div>
 </Modal>
 
@@ -171,7 +175,7 @@
     .container {
         height: 100%;
         display: grid;
-        grid-template-rows: 30% 20% 30%;
+        grid-template-rows: 25% 20% 45% 15%;
         row-gap: 0px;
         justify-items: center;
         align-items: center;
@@ -179,6 +183,10 @@
 
     h1 {
         font-size: $header-size;
+    }
+
+    .footer-area {
+        text-align: center;
     }
 
     .divider {
