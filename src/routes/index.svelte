@@ -8,7 +8,7 @@
         const url = `/randomtext/${initialPeriod}.json`;
         const response = await fetch(url);
         const text = (await response.json()).text as Text;
-        
+
         return {
             status: response.status,
             props: {
@@ -22,7 +22,7 @@
     import Modal, { bind } from 'svelte-simple-modal';
 
     import type { GuessFeedback, Text } from '$lib/types';
-    import { getPeriodPercentage, maxWords, maxYear, numPeriods, periods } from '$lib/info';
+    import { getPeriodPercentage, getWinType, maxWords, maxYear, numPeriods, periods, WinType } from '$lib/info';
     import SliderInput from '$lib/slider_input.svelte';
     import NumberInput from '$lib/number_input.svelte';
     import QuoteContent from '$lib/quote_content.svelte';
@@ -68,6 +68,24 @@
         periodLabelsTemplateColumns = percentages.join(' ');
     }
 
+    async function playAudio(winType: WinType) {
+        switch (winType) {
+            case WinType.Correct:
+                const winAudio = document.getElementById('win-audio');
+                if (winAudio && winAudio instanceof HTMLAudioElement) {
+                    await winAudio.play();
+                }
+                break;
+            case WinType.PartiallyCorrect:
+                const partialWinAudio = document.getElementById('partial-win-audio');
+                if (partialWinAudio && partialWinAudio instanceof HTMLAudioElement) {
+                    await partialWinAudio.play();
+                }
+            default:
+                break;
+        }
+    }
+
     async function onSubmitGuess() {
         if (!guessed) {
             const response = await fetch(`/feedback/${text.id}.json?guess=${guess}`);
@@ -75,6 +93,10 @@
                 guessed = true;
                 const responseJson = await response.json();
                 guessFeedback = responseJson.feedback as GuessFeedback;
+
+                const winType = getWinType(guessFeedback.distance);
+                await playAudio(winType);
+
                 showFeedbackModal();
             }
         }
@@ -92,6 +114,8 @@
 </script>
 
 <Modal show={$feedbackModal}>
+    <audio id="win-audio" src="win.wav"></audio>
+    <audio id="partial-win-audio" src="partial_win.mp3"></audio>
     <div class="container">
         <div class="header-area">
             <h1>
@@ -120,14 +144,20 @@
                 <div class="period-label" id="eme-period-label">Early Modern English</div>
                 <div class="period-label" id="ce-period-label">Contemporary English</div>
             </div>
-            <div class="button-container" id="guess-button-container">
-                <button class="button" id="guess-button" disabled={guessed} on:click={onSubmitGuess}>Guess</button>
+            <div class="button-container" id="skip-button-container">
+                {#if !guessed}
+                    <button class="button" id={guessed ? "next-button" : "skip-button"} on:click={onSkip}>{guessed ? 'Next' : 'Skip'}</button>
+                {/if}
             </div>
             <div id="number-input">
                 <NumberInput disabled={guessed} bind:values input={values[0]} />
             </div>
-            <div class="button-container" id="skip-button-container">
-                <button class="button" id={guessed ? "next-button" : "skip-button"} on:click={onSkip}>{guessed ? 'Next' : 'Skip'}</button>
+            <div class="button-container" id="guess-button-container">
+                {#if guessed}
+                    <button class="button" id={guessed ? "next-button" : "skip-button"} on:click={onSkip}>{guessed ? 'Next' : 'Skip'}</button>
+                {:else}
+                    <button class="button" id="guess-button" disabled={guessed} on:click={onSubmitGuess}>Guess</button>
+                {/if}
             </div>
         </div>
     </div>
@@ -210,7 +240,7 @@
     }
 
     #guess-button-container {
-        grid-area: 2 / 2 / 3 / 3;
+        grid-area: 2 / 6 / 3 / 7;
     }
 
     #number-input {
@@ -221,7 +251,7 @@
     }
 
     #skip-button-container {
-        grid-area: 2 / 6 / 3 / 7;
+        grid-area: 2 / 2 / 3 / 3;
     }
 
     .button-container {

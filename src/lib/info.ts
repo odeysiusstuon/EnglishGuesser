@@ -59,9 +59,30 @@ export const periods: {[key: string]: Period} = {
         sliderColorIndex: 3,
     },
 };
+
 export const minYear = periods.oe.years.start;
 export const maxYear = periods.ce.years.end;
 export const numPeriods = Object.keys(periods).length;
+
+export enum WinType {
+    Correct,
+    PartiallyCorrect,
+    Incorrect,
+};
+export const winConditions = {
+    [WinType.Correct]: 0,
+    [WinType.PartiallyCorrect]: 20,
+};
+
+export function getWinType(distance: number) {
+    if (distance === winConditions[WinType.Correct]) {
+        return WinType.Correct;
+    } else if (distance <= winConditions[WinType.PartiallyCorrect]) {
+        return WinType.PartiallyCorrect;
+    } else {
+        return WinType.Incorrect;
+    }
+}
 
 export const graceFactor = 20;
 export const maxPoints = 100;
