@@ -162,7 +162,7 @@
         </div>
         
         <div class="footer-area">
-            <footer>Created by <a href="https://www.linkedin.com/in/odeysiusstuon/">Odeysiuss Tuon</a>. Powered by <a href="https://kit.svelte.dev/">SvelteKit</a>.</footer>
+            <footer>Created by <a href="https://github.com/odeysiusstuon/">Odeysiuss Tuon</a>. Powered by <a href="https://kit.svelte.dev/">SvelteKit</a>.</footer>
         </div>
     </div>
 </Modal>
