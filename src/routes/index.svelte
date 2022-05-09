@@ -22,7 +22,7 @@
     import Modal, { bind } from 'svelte-simple-modal';
 
     import type { GuessFeedback, Text } from '$lib/types';
-    import { getPeriodPercentage, maxYear, numPeriods, periods } from '$lib/info';
+    import { getPeriodPercentage, maxWords, maxYear, numPeriods, periods } from '$lib/info';
     import SliderInput from '$lib/slider_input.svelte';
     import NumberInput from '$lib/number_input.svelte';
     import QuoteContent from '$lib/quote_content.svelte';
@@ -30,6 +30,7 @@
 
     import { writable } from 'svelte/store';
     import FeedbackPopup from '$lib/feedback/feedback_popup.svelte';
+import { test_database } from '$lib/db/test_database';
     const feedbackModal = writable(null);
     const showFeedbackModal = () => feedbackModal.set(bind(FeedbackPopup, { feedback: guessFeedback }));
 
@@ -44,6 +45,24 @@
     let guessFeedback: GuessFeedback;
     
     export let text: Text;
+    let textContent: string = '';
+    $: {
+        textContent = text.content;
+        const words = textContent.split(' ');
+        const numWords = words.length;
+        if (numWords > maxWords) {
+            console.log(text.content);
+            textContent = getRandomSubstring(words, numWords);
+            console.log('trimmed');
+        }
+    }
+
+    function getRandomSubstring(words: string[], numWords: number) {
+        const start = Math.floor((Math.random() * (numWords - maxWords)));
+        const end = start + maxWords;
+        console.log(start, end);
+        return `...${words.slice(start, end + 1).join(' ')}...`;
+    }
 
     let periodLabelsTemplateColumns: string = '';
     const percentages = [];
@@ -69,7 +88,7 @@
         const url = `/randomtext/${currentPeriod}.json`;
         const response = await fetch(url);
         text = (await response.json()).text as Text;
-        values[0] = maxYear;
+        // values[0] = maxYear;
         guessed = false;
     }
 
@@ -94,18 +113,18 @@
             >
                 <HelpContent />
             </Modal>
-            <QuoteContent maxWidth="80%">{text.content}</QuoteContent>
+            <QuoteContent maxWidth="80%">{textContent}</QuoteContent>
         </div>
     
         <div class="guess-input-area"> 
             <div id="slider-area" style={`--periods-template-columns: ${periodLabelsTemplateColumns}; --num-periods: ${numPeriods}`}>
+                <div id="slider">
+                    <SliderInput disabled={guessed} bind:values />
+                </div>
                 <div class="period-label" id="oe-period-label">Old English</div>
                 <div class="period-label" id="me-period-label">Middle English</div>
                 <div class="period-label" id="eme-period-label">Early Modern English</div>
                 <div class="period-label" id="ce-period-label">Contemporary English</div>
-                <div id="slider">
-                    <SliderInput disabled={guessed} bind:values />
-                </div>
             </div>
             <div class="button-container" id="guess-button-container">
                 <button class="button" id="guess-button" disabled={guessed} on:click={onSubmitGuess}>Guess</button>
@@ -182,16 +201,16 @@
         display: grid;
         margin: -2em;
         grid-template-columns: var(--periods-template-columns);
-        grid-template-rows: 40%;
+        grid-template-rows: 60%;
         grid-area: 1 / 1 / 2 / 8;
     }
 
     #slider {
-        grid-area: 2 / 1 / 3 / calc(var(--num-periods) + 1);
+        grid-area: 1 / 1 / 2 / calc(var(--num-periods) + 1);
     }
 
     .period-label {
-        grid-row-start: 1;
+        grid-row-start: 2;
         text-align: center;
         font-size: 20px;
     }

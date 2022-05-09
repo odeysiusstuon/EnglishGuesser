@@ -65,3 +65,5 @@ export const numPeriods = Object.keys(periods).length;
 
 export const graceFactor = 20;
 export const maxPoints = 100;
+
+export const maxWords = 20;

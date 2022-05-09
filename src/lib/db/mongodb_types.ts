@@ -7,4 +7,3 @@ export type TextDocument = {
 };
 
 export type TextMongoDocument = WithId<Document> & TextDocument;
-
